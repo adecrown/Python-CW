@@ -1,0 +1,193 @@
+# Adekunle Ogunade
+# Python Coursework
+
+from graphics import *
+
+def patch1(win,x,y,colour):
+    x1 = x + 0
+    x2 = x + 5
+    y1 = y + 0
+    y2 = y + 20
+    for i in range(4):
+        rec = Rectangle(Point(x1, y1),Point(x2, y2))
+        rec.setFill(colour)
+        rec.draw(win)
+        x1 = x1 + 5 # increases the x by 5 to draw next point
+        x2 = x2 + 5
+        
+        
+def patch2(win,x,y):
+    x1 = x + 20
+    x2 = x + 0
+    y1 = y + 5
+    y2 = y + 0
+    for i in range(4):
+        rec = Rectangle(Point(x1,y1),Point(x2,y2))
+        rec.draw(win)
+        y1 = y1 + 5 # increases the y by 5 to draw next point
+        y2 = y2 + 5
+
+
+def drawPatch(win, x, y, colour):
+    x1 = x 
+    y1 = y + 90
+    x2 = x + 10
+    y2 = y + 100
+    for i in range(10):
+        square = Rectangle(Point(x1, y1),Point(x2, y2))#draws rectangle base on the point  above and below
+        square.setFill(colour)
+        square.draw(win)
+        x1 = x1 + 10 #increase x by 10
+        x2 = x2 + 10
+        y1 = y1 - 10 #decrease y by 10
+        y2 = y2 - 10
+      
+            
+def drawPatch2(win,x,y,colour):
+    size = 100
+    drawer = 0
+    for i in range(0,size,20): #increases by 20 untill 100
+        for j in range(0,size,20):
+            if drawer == 0: #draws another patch1 if drawer is 0
+                patch1(win,j+x,i+y,colour)
+                drawer = 1 #changes drawer to 1 in order to draw the secend patch
+            else:
+                patch2(win,j+x,i+y)
+                drawer = 0 #changes drawer back to 0 in order to draw the first patch
+
+
+def checkColour(colour):
+    validcolours=["red", "green", "blue", "yellow", "magenta", "cyan"] #valid colour lists
+    if colour != "":
+        # it coounts the number of times the typed in colour appear in the validcolour list, if it is zero then the colour typed in, is invalid.
+        if validcolours.count(colour)==0: 
+          print("Colour '"+str(colour)+"' is invalid.")
+          return False
+    else:#if the user enters nothing 
+        print("Colour can't be blank.")
+        return False
+    return True 
+    
+    
+                 
+def isInteger(value):
+    for i in value:
+        if i.isdigit()!=True:#it checks if the value given is integer
+            return False
+    return True
+    
+    
+    
+def dimensions(value):
+    validnumbers = [i for i in [5, 7, 9]]#valid patch size
+    if value != "":#if the user type in a value, it goes to the if statement below
+        if isInteger(value):# checks if the above value is integer
+            if validnumbers.count(int(value))==0:#if the given value appears 0 times in the list
+                print("You must enter value 5, 7 or 9 ")
+                return False
+        else:# if the above value is not an integer
+            print("Your value should be an integer.")
+            return False
+    else:#if the user did not type in a value, it goes to the statement below
+        print("Value can't be blank")
+        return False
+    return True
+
+
+def getinput():
+    while True:
+        width=input("Enter the patch size: ") 
+        if dimensions(width):# checks if the given value is the required size
+            size = eval(width)
+            break
+
+    colours=[]  #List of typed in colours.
+    for i in range(4):
+        while True:
+            colour=input("Enter a valid colour "+str(i+1)+ ": ") 
+            if checkColour(colour):
+                colours.append(colour) #adds the typed colour to the end of colour list
+                break
+    
+    return size,colours
+    
+    
+
+def finaldraw(window,numrow,numcol,colours):
+    colourNo = 0
+    for columns in range(0,numcol,100):#gets the window size with the increment of a 100
+        for rows in range(0,numrow,100):
+            #if row or column is 200,300 or 400 (these is the 3 point i need to draw my final    patch)'''
+            if rows == numcol/2-50 or columns == numcol/2-50:
+               drawPatch(window,rows,columns,colours[colourNo]) 
+            else:
+                drawPatch2(window,rows,columns,colours[colourNo])
+            # if colour is less than 3, add 1, else it starts from begining which is 0
+            if colourNo < 3:
+               colourNo = colourNo+1 
+            else:
+               colourNo=0
+        
+def NextColour(colour):
+    if colour==3:
+        colour = 0
+    else:
+        colour = colour + 1
+    return colour  
+     
+def setColourslist(size):
+    patchColoursList=[]
+    colour=-1
+    for i in range (size**2):#loops through using the window size while multiplying itself
+        colour = colour + 1
+        patchColoursList.append(colour) #adds next colour to patchColoursList
+        if colour == 3:
+            colour = -1
+    return patchColoursList
+                                    
+def changer(window,numcol,size,colours,patchColoursList):
+    while True:
+        p = window.getMouse()
+        x = (p.getX()//100)*100 #checks how many times 100 goes in point x and then times it by 100
+        y = (p.getY()//100)*100
+        
+        x1 =x//100 #checks how many times 100 goes in x 
+        y1 = y//100
+        y1 = y1*size #times y1 by the window size given by the user
+        indency = int(x1+y1) # gets the number of the patch and send it to patchColoursList
+        
+        nextColour = NextColour(patchColoursList[indency]) #changes to the next colour in the list
+        patchColoursList[indency] = nextColour #tells patchColoursList the current colour
+        nextColour = colours[nextColour]
+        #if column is 200,300 or 400
+        if x == numcol/2-50 or y == numcol/2-50:
+            drawPatch(window,x,y,nextColour) 
+        else:
+            drawPatch2(window,x,y,nextColour)
+
+
+
+
+def main():
+    size, colours = getinput() 
+    numrow = 100 * size # it takse the users input and times by 100
+    numcol = 100 * size
+    patchColoursList = setColourslist(size)# append patch list using loops  
+    window = GraphWin("Patchwork Samples (720163)",numcol, numrow)
+    finaldraw(window,numrow,numcol,colours)# draws the whole patch
+
+    changer(window,numcol,size,colours,patchColoursList) # lets the user change the patch colour
+
+main()
+
+
+
+
+    
+
+
+
+
+
+        
+
