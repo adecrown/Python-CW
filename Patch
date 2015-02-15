@@ -115,7 +115,7 @@ def getinput():
 
 def finaldraw(window,numrow,numcol,colours):
     colourNo = 0
-    for columns in range(0,numcol,100):#gets the window size with the increment of a 100
+    for columns in range(0,numcol,100):#this gets the window size with the increment of a 100
         for rows in range(0,numrow,100):
             #if row or column is 200,300 or 400 (these is the 3 point i need to draw my final    patch)'''
             if rows == numcol/2-50 or columns == numcol/2-50:
